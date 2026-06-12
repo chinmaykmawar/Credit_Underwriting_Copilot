@@ -1,4 +1,4 @@
-venv/
+Credit_underwriting_env/
 .env
 __pycache__/
 *.pyc
