@@ -8,6 +8,8 @@ __pycache__/
 
 data/raw/*
 !data/raw/.gitkeep
+!data/raw/sample_documents/
+!data/raw/sample_documents/.gitkeep
 
 data/processed/*
 !data/processed/.gitkeep
