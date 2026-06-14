@@ -1,0 +1,43 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name":"Chunking_test",
+            "type":"debugpy",
+            "request":"launch",
+            "module":"tests.test_chunking",
+            "console": "integratedTerminal"
+        },
+        {
+            "name":"Embedding_test",
+            "type":"debugpy",
+            "request":"launch",
+            "module":"tests.test_embedder",
+            "console": "integratedTerminal"
+        },
+        {
+            "name":"VectorStore_test",
+            "type":"debugpy",
+            "request":"launch",
+            "module":"tests.test_VectorStore",
+            "console": "integratedTerminal"
+        },
+        {
+            "name":"Retreiver_test",
+            "type":"debugpy",
+            "request":"launch",
+            "module":"tests.test_retreiver",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        }
+    ]
+}
