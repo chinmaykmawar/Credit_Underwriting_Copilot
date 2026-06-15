@@ -5,10 +5,11 @@ from src.chunking.chunker import Chunker
 from src.retrieval.embedder import Embedder
 from src.retrieval.retriever import Retriever, RetrievalResult
 from src.retrieval.VectorStore import VectorStore
+from src.llm.qwen_client import QwenClient
+from src.rag.rag_service import RAGService
 from pathlib import Path
 
 embedder=Embedder()
-
 def get_document() -> Document:
     metadata = DocumentMetadata(
         company_name="Tata Motors",
@@ -44,13 +45,12 @@ def get_VectorStore():
 
 vector_store=get_VectorStore()
 
-query_embedding = chunks[100].embedding
-assert query_embedding is not None
-distances, indices = vector_store.search(query_embedding,top_k=5)
-print(indices)
-print(distances)
+retriever = Retriever(embedder=embedder,vector_store=vector_store,chunks=chunks)
 
-for idx in indices:
-    print("=" * 100)
-    print(chunks[idx].start_page,chunks[idx].end_page)
-    print(chunks[idx].text[:300])
+qwen=QwenClient()
+rag_service = RAGService(retriever=retriever,llm_client=qwen)
+response = rag_service.ask(
+    "What are the principal risks faced by Tata Motors?",
+    top_k=10
+)
+print(response)

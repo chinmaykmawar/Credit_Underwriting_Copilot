@@ -33,6 +33,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name":"LLM_test",
+            "type":"debugpy",
+            "request":"launch",
+            "module":"tests.test_llm",
+            "console": "integratedTerminal"
+        },
+        {
+            "name":"RAGService_test",
+            "type":"debugpy",
+            "request":"launch",
+            "module":"tests.test_ragService",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",

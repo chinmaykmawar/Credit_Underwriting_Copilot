@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer
 from src.chunking.models import Chunk
 
 class Embedder:
-    def __init__(self,model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
+    def __init__(self,model_name : str = "BAAI/bge-base-en-v1.5"):
         self.model_name = model_name
         self.model = SentenceTransformer(model_name)
 
@@ -14,14 +14,14 @@ class Embedder:
         for chunk, embedding in zip(chunks, embeddings):
             chunk.embedding = embedding
 
-    def save_chunks(self,chunks: list[Chunk],file_path: str) -> None:
+    def save_chunks(self,chunks: list[Chunk],file_path: str =r"data\processed\chunks.pkl") -> None:
         output_file = Path(file_path)
         output_file.parent.mkdir(parents=True,exist_ok=True)
 
         with open(output_file, "wb") as f:
             pickle.dump(chunks, f)
 
-    def load_chunks(self,file_path: str) -> list[Chunk]:
+    def load_chunks(self,file_path: str=r"data\processed\chunks.pkl") -> list[Chunk]:
         input_file = Path(file_path)
         if not input_file.exists():
             raise FileNotFoundError(f"Chunk file not found: {input_file}")

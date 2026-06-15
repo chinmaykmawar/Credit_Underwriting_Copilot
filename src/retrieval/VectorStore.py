@@ -20,14 +20,14 @@ class VectorStore:
         self.index = faiss.IndexFlatL2(self.embedding_dimension)
         self.index.add(embedding_matrix)
 
-    def save_index(self,file_path: str) -> None:
+    def save_index(self,file_path: str=r"data\processed\faiss.index") -> None:
         if self.index is None:
             raise ValueError("FAISS index has not been created.")
         output_file = Path(file_path)
         output_file.parent.mkdir(parents=True,exist_ok=True)
         faiss.write_index(self.index,str(output_file))
 
-    def load_index(self,file_path: str) -> None:
+    def load_index(self,file_path: str=r"data\processed\faiss.index") -> None:
         input_file = Path(file_path)
         if not input_file.exists():
             raise FileNotFoundError(f"Index file not found: {input_file}")

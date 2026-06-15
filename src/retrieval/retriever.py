@@ -15,7 +15,15 @@ class Retriever:
         self.vector_store = vector_store
         self.chunks = chunks
 
-    def retrieve(self,query: str,top_k: int = 5) -> list[RetrievalResult]:
+    def retrieve(self,query: str,top_k: int = 5) -> list[Chunk]:
+        query = query.lower().strip()
+        query_embedding = self.embedder.generate_query_embedding(query)
+        _, indices = self.vector_store.search(query_embedding=query_embedding,top_k=top_k)
+
+        results = [self.chunks[idx] for idx in indices if idx!=-1]
+        return results
+    
+    def retrieve_with_dis(self,query: str,top_k: int = 5) -> list[RetrievalResult]:
         query_embedding = self.embedder.generate_query_embedding(query)
         distances, indices = self.vector_store.search(query_embedding=query_embedding,top_k=top_k)
 
