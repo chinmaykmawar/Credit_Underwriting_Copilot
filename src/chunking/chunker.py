@@ -2,7 +2,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 import re
 from src.ingestion.models import Document
 from src.chunking.models import Chunk
-
+from pathlib import Path
+import pickle
 
 class Chunker:
 
@@ -60,3 +61,18 @@ class Chunker:
 
     def _remove_page_markers(self,text: str) -> str:
         return re.sub(r"-!PAGE\s+\d+!-","",text).strip()
+    
+    def save_chunks(self,chunks: list[Chunk],file_path: str =r"data\processed\chunks.pkl") -> None:
+        output_file = Path(file_path)
+        output_file.parent.mkdir(parents=True,exist_ok=True)
+
+        with open(output_file, "wb") as f:
+            pickle.dump(chunks, f)
+
+    def load_chunks(self,file_path: str=r"data\processed\chunks.pkl") -> list[Chunk]:
+        input_file = Path(file_path)
+        if not input_file.exists():
+            raise FileNotFoundError(f"Chunk file not found: {input_file}")
+        with open(input_file, "rb") as f:
+            chunks = pickle.load(f)
+        return chunks
