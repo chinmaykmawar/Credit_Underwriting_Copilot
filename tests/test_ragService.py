@@ -35,10 +35,10 @@ def get_chunks():
     else:
         print ("Creating Chunks.....")
         document=get_document()
-        chunks = chunker.create_chunks(document)
+        chunks = chunker.create_chunk_files(document)
         embedder=Embedder()
         embedder.generate_embeddings(chunks)
-        chunker.save_chunks(chunks)
+        chunker._save_chunks(chunks)
         print("Chunks created and saved")
     return chunks
 
@@ -46,7 +46,7 @@ def get_VectorStore():
     vector_store=VectorStore()
     if not Path(r"data\processed\faiss.index").exists():
         print ("Creating Index file...")
-        vector_store.create_index(chunks)
+        vector_store.create_index_file(chunks)
         vector_store.save_index()
     vector_store.load_index(r"data\processed\faiss.index")
     print ("Indexes loaded")
@@ -67,10 +67,3 @@ with open("tests/output.txt", "w", encoding="utf-8") as f:
     f.write("=" * 80)
     for source in response.sources:
         f.write(f"\n{source.document_type} | "+ f"Pages {source.start_page}-{source.end_page}")
-
-# print(response)
-
-# print("\nSources")
-# print("=" * 80)
-# for source in response.sources:
-#     print(f"{source.document_type} | ", f"Pages {source.start_page}-{source.end_page}")

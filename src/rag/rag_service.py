@@ -10,17 +10,25 @@ class RAGService:
         self.retriever = retriever
         self.llm_client = llm_client
 
-    def ask(self,question: str,top_k: int = 10) -> RAGResponse:
+    def ask(self,company_names:list[str], financial_years:list[int], question: str,top_k: int = 10) -> RAGResponse:
         if not question.strip():
             raise ValueError("Question cannot be empty.")
         query=question.lower().strip()
         query_embeddings=self.embedder.generate_query_embedding(query)
-        results = self.retriever.retrieve(query_embeddings,top_k=top_k)
-        retrieved_chunks=[res.chunk for res in results]
-        prompt = self._get_system_prompt() +"\n\n"+ self._get_user_prompt(question,retrieved_chunks)
-        answer= self.llm_client.generate_response(prompt)
-        sources = self._extract_sources(retrieved_chunks)
-        return RAGResponse(answer, sources)
+        results=[]
+        for company_name in company_names:
+            for financial_year in financial_years:
+                results.extend(self.retriever.retrieve(company_name, financial_year, query_embeddings,top_k=top_k))
+                results = sorted(results, key=lambda x: x.distance, reverse=True)[:top_k]
+        if len(results)>0:
+            retrieved_chunks=[res.chunk for res in results]
+            prompt = self._get_system_prompt() +"\n\n"+ self._get_user_prompt(question,retrieved_chunks)
+            answer= self.llm_client.generate_response(prompt)
+            sources = self._extract_sources(retrieved_chunks)
+            return RAGResponse(answer, sources)
+        else:
+            return RAGResponse('No details found for mentioned companies for years mention in the query', [])
+            
 
     def _build_context(self,chunks) -> str:
         context_parts = []

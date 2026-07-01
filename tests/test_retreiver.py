@@ -26,7 +26,7 @@ def get_chunks():
     else:
         document=get_document()
         chunker = Chunker()
-        chunks = chunker.create_chunks(document)
+        chunks = chunker.create_chunk_files(document)
         embedder.generate_embeddings(chunks)
         embedder.save_chunks(chunks)
     return chunks
@@ -36,7 +36,7 @@ chunks=get_chunks()
 def get_VectorStore():
     vector_store=VectorStore()
     if not Path(r"data\processed\faiss.index").exists():
-        vector_store.create_index(chunks)
+        vector_store.create_index_file(chunks)
         vector_store.save_index()
     vector_store.load_index(r"data\processed\faiss.index")
     return vector_store

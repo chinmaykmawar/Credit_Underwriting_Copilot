@@ -17,7 +17,7 @@ def get_document() -> Document:
 
 document=get_document()
 chunker = Chunker()
-chunks = chunker.create_chunks(document)
+chunks = chunker.create_chunk_files(document)
 
 print(f"Total Chunks: {len(chunks)}")
 

@@ -47,6 +47,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name":"App_test",
+            "type":"debugpy",
+            "request":"launch",
+            "module":"tests.test_app",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",

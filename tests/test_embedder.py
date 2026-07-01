@@ -21,7 +21,7 @@ def get_document() -> Document:
 def get_chunks()-> list[Chunk]:
     document=get_document()
     chunker = Chunker()
-    chunks = chunker.create_chunks(document)
+    chunks = chunker.create_chunk_files(document)
     return chunks
 
 embedder = Embedder()
