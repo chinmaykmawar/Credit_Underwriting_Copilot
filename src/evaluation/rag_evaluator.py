@@ -1,6 +1,7 @@
 import json
 import logging
 from typing import List
+import re
 
 # Set up basic logging for the evaluation runs
 logging.basicConfig(level=logging.INFO)
@@ -14,14 +15,15 @@ class LLMJudgeEvaluator:
         """
         self.llm = llm_client
 
-    def _parse_json_response(self, response_text: str) -> dict:
-        """Defensive parsing in case the local LLM wraps the JSON in markdown blocks."""
-        try:
-            clean_text = response_text.replace("```json", "").replace("```", "").strip()
-            return json.loads(clean_text)
-        except json.JSONDecodeError:
-            logger.error(f"Failed to parse LLM Judge output: {response_text}")
-            return {"score": 0, "reasoning": "Failed to parse JSON."}
+    def _parse_json(self, response_text: str) -> dict:
+    # Use regex to find the first '{' and last '}'
+        match = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(0))
+            except json.JSONDecodeError:
+                pass
+        return {"score": 0, "reasoning": "Failed to parse JSON output from Judge LLM."}
 
     def evaluate_context_relevance(self, query: str, retrieved_contexts: List[str]) -> dict:
         system_prompt = """
@@ -38,7 +40,7 @@ class LLMJudgeEvaluator:
         user_prompt = f"Query: {query}\n\nRetrieved Context:\n{context_str}"
         
         response = self.llm.chat(system=system_prompt, user=user_prompt)
-        return self._parse_json_response(response)
+        return self._parse_json(response)
 
     def evaluate_groundedness(self, answer: str, retrieved_contexts: List[str]) -> dict:
         system_prompt = """
@@ -55,7 +57,7 @@ class LLMJudgeEvaluator:
         user_prompt = f"Context:\n{context_str}\n\nGenerated Answer:\n{answer}"
         
         response = self.llm.chat(system=system_prompt, user=user_prompt)
-        return self._parse_json_response(response)
+        return self._parse_json(response)
 
     def evaluate_answer_relevance(self, query: str, answer: str) -> dict:
         system_prompt = """
@@ -71,9 +73,9 @@ class LLMJudgeEvaluator:
         user_prompt = f"Query: {query}\n\nGenerated Answer:\n{answer}"
         
         response = self.llm.chat(system=system_prompt, user=user_prompt)
-        return self._parse_json_response(response)
+        return self._parse_json(response)
 
-    def run_full_triad(self, query: str, answer: str, contexts: List[str]) -> dict:
+    def run_full_triad(self, query: str, answer: str, contexts: list[str]) -> dict:
         """Executes all three evaluation metrics."""
         return {
             "context_relevance": self.evaluate_context_relevance(query, contexts),
